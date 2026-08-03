@@ -1,0 +1,10 @@
+SETHOURS v1.2 SHIFT FIX
+
+1. Replace all files in your GitHub repository with this package.
+2. Keep the icons and splash folders intact.
+3. Wait for GitHub Pages to redeploy.
+4. Refresh the app in Safari. Existing timesheet data should remain.
+
+FIXES
+- Cancel and X no longer save a manual shift.
+- Tap a populated day in Timesheet to edit it and use Delete Shift.

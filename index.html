@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SetHours">
+<link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <title>SetHours</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <button class="icon-button" id="openSettings" aria-label="Settings">⚙</button>
+      <div class="brand">SET<span>HOURS</span></div>
+      <button class="icon-button" id="quickAdd" aria-label="Add shift">＋</button>
+    </header>
+
+    <main>
+      <section class="view active" id="todayView">
+        <div class="eyebrow" id="todayLabel"></div>
+
+        <section class="hero-card">
+          <div id="idleState">
+            <button class="primary-action clock-in" id="clockInBtn">
+              <span class="action-icon">◷</span>
+              <span><strong>CLOCK IN</strong><small>Tap to start your shift</small></span>
+            </button>
+          </div>
+
+          <div id="activeState" class="hidden">
+            <div class="status-line"><span class="dot"></span> ACTIVE SHIFT</div>
+            <div class="timer" id="liveTimer">00:00:00</div>
+            <div class="timer-caption">Total elapsed</div>
+            <div class="started-at" id="startedAt"></div>
+            <button class="primary-action clock-out" id="clockOutBtn">■ CLOCK OUT</button>
+            <div class="action-row">
+              <button class="secondary-action break" id="breakBtn">☕ START BREAK</button>
+              <button class="secondary-action travel" id="travelBtn">🚙 ADD TRAVEL</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel current-panel">
+          <div class="panel-title">CURRENT SHIFT</div>
+          <div class="info-list">
+            <button class="info-row" data-edit="production"><span><small>Production</small><strong id="currentProduction">Not selected</strong></span><b>›</b></button>
+            <button class="info-row" data-edit="role"><span><small>Role</small><strong id="currentRole">Not selected</strong></span><b>›</b></button>
+            <button class="info-row" data-edit="location"><span><small>Location</small><strong id="currentLocation">Not selected</strong></span><b>›</b></button>
+            <button class="info-row" data-edit="notes"><span><small>Episode / Notes</small><strong id="currentNotes">None</strong></span><b>›</b></button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><span>THIS WEEK</span><button data-nav="timesheet">View All</button></div>
+          <div class="metric-grid">
+            <div><small>Total Hours</small><strong id="weekTotal">0.00</strong></div>
+            <div><small>Regular (≤ <span id="weeklyThresholdLabel">40</span>h)</small><strong id="weekRegular">0.00</strong></div>
+            <div><small>Overtime</small><strong class="blue" id="weekOvertime">0.00</strong></div>
+            <div><small>Est. Pay</small><strong class="green" id="weekPay">$0.00</strong></div>
+            <div><small>Travel</small><strong id="weekTravel">0.00</strong></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><span>BY PRODUCTION</span><button data-nav="productions">View All</button></div>
+          <div id="productionSummary" class="production-summary"></div>
+        </section>
+      </section>
+
+      <section class="view" id="timesheetView">
+        <div class="section-header">
+          <button id="prevWeek">‹</button>
+          <div><h2>This Week</h2><div id="weekRange"></div></div>
+          <button id="nextWeek">›</button>
+        </div>
+        <div id="weekRows" class="week-rows"></div>
+        <section class="panel">
+          <div class="metric-grid">
+            <div><small>Total Hours</small><strong id="tsTotal">0.00</strong></div>
+            <div><small>Regular</small><strong id="tsRegular">0.00</strong></div>
+            <div><small>Overtime</small><strong class="blue" id="tsOvertime">0.00</strong></div>
+            <div><small>Est. Pay</small><strong class="green" id="tsPay">$0.00</strong></div>
+            <div><small>Travel</small><strong id="tsTravel">0.00</strong></div>
+          </div>
+        </section>
+        <button class="wide-action" id="exportBtn">⇧ EXPORT / SAVE PDF</button>
+      </section>
+
+      <section class="view" id="payView">
+        <div class="page-title"><h2>Pay</h2><p>Estimated gross earnings</p></div>
+        <section class="panel pay-card">
+          <div class="pay-total-label">ESTIMATED THIS WEEK</div>
+          <div class="pay-total" id="payEstimate">$0.00</div>
+        </section>
+        <section class="panel" id="payBreakdown"></section>
+      </section>
+
+      <section class="view" id="productionsView">
+        <div class="page-title"><h2>Productions</h2><p>Saved production profiles</p></div>
+        <div id="productionsList"></div>
+        <button class="wide-action" id="addProductionBtn">＋ ADD PRODUCTION</button>
+      </section>
+
+      <section class="view" id="moreView">
+        <div class="page-title"><h2>More</h2><p>Tools and data</p></div>
+        <section class="panel menu-list">
+          <button id="manualShiftBtn">Add Manual Shift <span>›</span></button>
+          <button id="exportCsvBtn">Export CSV <span>›</span></button>
+          <button id="printBtn">Print / Save PDF <span>›</span></button>
+          <button id="backupBtn">Download Backup <span>›</span></button>
+          <label class="file-button">Restore Backup <input type="file" id="restoreInput" accept=".json"></label>
+          <button class="danger-text" id="clearDataBtn">Clear All Data <span>›</span></button>
+        </section>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="active" data-view="todayView"><span>◷</span><small>Today</small></button>
+      <button data-view="timesheetView"><span>▦</span><small>Timesheet</small></button>
+      <button data-view="payView"><span>＄</span><small>Pay</small></button>
+      <button data-view="productionsView"><span>🎬</span><small>Productions</small></button>
+      <button data-view="moreView"><span>•••</span><small>More</small></button>
+    </nav>
+  </div>
+
+  <dialog id="modal">
+    <form method="dialog" id="modalForm">
+      <div class="modal-head"><h3 id="modalTitle">Edit</h3><button type="button" id="modalClose" aria-label="Close">×</button></div>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button type="button" id="modalCancel" class="ghost">Cancel</button>
+        <button type="submit" id="modalSave">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
